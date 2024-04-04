@@ -10,14 +10,14 @@
 
 我喜欢用微信读书网页端看书, 但是网页端和移动端有许多不同. 对我而言最大的痛点是网页端没有自动阅读. 开始你的沉浸式阅读吧!
 
- - 按下x, 开启自动阅读
- - 按下w/s, 往上/往下滚动
- - 按下a/d, 降低/加快阅读速度
+- 按下x, 开启自动阅读
+- 按下w/s, 往上/往下滚动
+- 按下a/d, 降低/加快阅读速度
 
 ### 安装方式
 
- - Firefox: https://addons.mozilla.org/zh-CN/firefox/addon/satellite/
- - Chrome: 审核中
+- Firefox: https://addons.mozilla.org/zh-CN/firefox/addon/satellite/
+- Chrome: 审核中
 
 ### 开发
 

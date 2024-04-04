@@ -1,11 +1,13 @@
 export interface Config {
   /** 自动阅读的速度 */
   speed: number;
-  /** 屏幕通知的停留时间 */
-  notifyTime: number;
+  pageWidth: number;
+  /** 寂静模式 */
+  muteMode: boolean;
 }
 
-export const defaultConfig = {
+export const defaultConfig: Config = {
   speed: 20,
-  notifyTime: 2000,
+  pageWidth: 1000,
+  muteMode: false,
 };
