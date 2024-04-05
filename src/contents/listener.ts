@@ -23,13 +23,28 @@ function addScrollTop(): void {
 }
 
 window.addEventListener('keydown', (e) => {
-  if (!beingReaderPage()) {
-    toast('请在阅读页面使用!', 'error');
-    return ;
-  }
   const key = e.key;
-  e.preventDefault();
-  e.stopPropagation();
+
+  if (
+    !beingReaderPage() &&
+    [
+      'x',
+      'X',
+      'a',
+      'A',
+      'd',
+      'D',
+      'ArrowUp',
+      'w',
+      'W',
+      'ArrowDown',
+      's',
+      'S'
+    ].includes(key)
+  ) {
+    toast('请在阅读页面使用!', 'error');
+    return;
+  }
   if (['x', 'X'].includes(key)) {
     // 开启/关闭自动阅读
     startAutoReading = !startAutoReading;
@@ -59,10 +74,14 @@ window.addEventListener('keydown', (e) => {
       toast(`已到达最大速度!`, 'error');
     }
   } else if (['ArrowUp', 'w', 'W'].includes(key)) {
+    e.preventDefault();
+    e.stopPropagation();
     recordScrollHeight();
     recordScroll -= 45;
     document.documentElement.scrollTop = recordScroll;
   } else if (['ArrowDown', 's', 'S'].includes(key)) {
+    e.preventDefault();
+    e.stopPropagation();
     recordScrollHeight();
     recordScroll += 45;
     document.documentElement.scrollTop = recordScroll;
@@ -79,7 +98,10 @@ window.addEventListener('load', () => {
   if (beingReaderPage()) {
     const bookTitle = document.querySelector('.readerTopBar_title_link');
     if (bookTitle) {
-      toast(`正在阅读: <<${bookTitle.textContent}>>\n按 x 开启沉浸式阅读!`, 'success');
+      toast(
+        `正在阅读: <<${bookTitle.textContent}>>\n按 x 开启沉浸式阅读!`,
+        'success'
+      );
     }
     // #region 自动滚动本质上是修改滚轴高度, 当翻页时, 需要重置滚轴高度. 这里判断翻页的方法是判断章节DOM内容是否变化
     const chapterTitle = document.querySelector('.readerTopBar_title_chapter');
@@ -98,7 +120,5 @@ window.addEventListener('load', () => {
       toast('章节标题容器DOM已更换类名无法查找, 请联系作者修改代码!');
     }
     // #endregion
-  } else {
-    toast('未检测到书籍, 快挑选你喜欢的书籍吧!');
   }
 });

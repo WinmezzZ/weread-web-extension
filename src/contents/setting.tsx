@@ -1,22 +1,70 @@
 import $ from 'jquery';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Badge, Kbd, Modal, Toggle, Tooltip } from 'react-daisyui';
+import {
+  Badge,
+  Checkbox,
+  Divider,
+  Form,
+  Kbd,
+  Modal,
+  Toggle,
+  Tooltip
+} from 'react-daisyui';
 
 import { getConfig, updateConfig } from '~background/config';
 import { myGetStyle, myPlasmoCSConfig } from '~core/plasmo-config';
 import { beingReaderPage } from '~core/utils';
+import { logoBase64 } from '~types/config';
 
 import { toast } from './toast';
 
 export const config = myPlasmoCSConfig;
 export const getStyle = myGetStyle;
 const widthList = [1000, 1200, 1400, 1600, 2000];
-const base64 =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAJ1BMVEX7jgryXw0AAAD9rA/90i/9zgX8ww//5jP8wCD6yW389Nr//bHziRSKzlbJAAAADXRSTlP+/wD//vzGCDj//wJ9gk4UkwAAAnpJREFUeJxtlD1v2zAQho+QPXgjYXvoyiEU4AwSaDkf6OBA9NBNgUI59RQksOeCgKd2CFQYKJAMBjIlq5EhHr3Uo7f2Z/VIyh8JyoGC3kcvT+TdEbgbv7l4nNz1Jr8M/+4VcLPg64mWdhQP3OxBx6zHTn95SooHsdoBE451RAIEi0QXpdgCIVAHgEB2B1oPCmMqYGb6qg/AIED9Sg2uhQcixDdF4RlASoVDl8YBNCiV0k/L+fmT1b0FrCFXqg+NJZwvUrW1AF9NZaCUDQ6NVHrLsIPAjGlLpVaXsuuDqEJwEGFGQXkdZe9JSgOraUyo1XEbsquUm5JhB8yMURfAWSzAKS8EiIzVU9hZ3Hpf5tpAeMlecthZcERq9JaUcBTTZQY7iwW10aJ+C9Os/XwJh5YoUFl9CLO8dRUF0oPIAnRC+xrGeVch8KTxhAZ8kmaBQClc3P9xY+4BsyBD4F+B2igAtQsLNAJaLeBPwAENOnbA6ow5QloxowgYAh/BAcQ40JFRm9YKEHAyIwhu2Bb4bytQ/BdQ0i7gDgH5AJqkXsBP1lWxj3AAkmuYspq6eK+zOkuGcERaqv9epznVtxDGTTyTQx2CqKlLEBH7ABIZ1xMDZoPR+wd7aOLByc8CVt+Irbc9wFQF8qQD4hjwUPabaLr0YsHx8obU8L8qQmWCek/Yor4HOnqrNo4J+IrpPem4NiCkhhUURK5KuqNXu5JtnHLDIFFVUWEZpvLUNQ4Pj11Ot2CQy6rVeHlPXLGdLVPXCKdVc/Iw3FjD2fNybou6t2tnXh77Ll/6PYj9lVH+cGu5MH8Orgwe8vXGB++9u2TstRQ+TqSc/N1dS/8AQHHIPEqwpd4AAAAASUVORK5CYII=';
+const controlList = [
+  {
+    title: '听书',
+    key: 'listen',
+    selector: '.readerControls_item.lecture'
+  },
+  {
+    title: '目录',
+    key: 'menu',
+    selector: '.readerControls_item.catalog'
+  },
+  {
+    title: '笔记',
+    key: 'note',
+    selector: '.readerControls_item.note'
+  },
+  {
+    title: '字号',
+    key: 'fontSize',
+    selector: '.readerControls_fontSize'
+  },
+  {
+    title: '主题',
+    key: 'theme',
+    selector: '.readerControls_item.dark,.readerControls_item.white'
+  },
+  {
+    title: 'App',
+    key: 'app',
+    selector: '.readerControls_item.download'
+  }
+];
 
 const App = () => {
   const [width, setWidth] = useState(null);
   const [muteMode, setMuteMode] = useState(false);
+  const [controlStatus, setControlStatus] = useState({
+    listen: false,
+    menu: true,
+    note: false,
+    fontSize: false,
+    theme: false,
+    app: false
+  });
   const ref = useRef<HTMLDialogElement>(null);
   const showModal = useCallback(() => {
     if (!beingReaderPage()) {
@@ -27,10 +75,15 @@ const App = () => {
   }, [ref]);
 
   useEffect(() => {
-    const { pageWidth, muteMode } = getConfig();
+    const { pageWidth, muteMode, controlStatus } = getConfig();
     setMuteMode(muteMode);
     if (beingReaderPage()) {
       setPageWidth(pageWidth);
+      setControlStatus(controlStatus);
+      // 控件状态初始化
+      controlList.forEach((v) => {
+        $(v.selector).css('display', controlStatus[v.key] ? 'flex' : 'none');
+      });
     }
   }, []);
 
@@ -41,10 +94,9 @@ const App = () => {
     }
     setWidth(value);
     updateConfig({ pageWidth: value });
-    $('.app_content').css('max-width', `${value}px`),
-      $('.readerTopBar').css('max-width', `${value}px`),
-      $('.readerControls').css('margin-left', value / 2 + 48 + 'px'),
-      setTimeout(() => window.dispatchEvent(new Event('resize')));
+    $('.app_content').css('max-width', `${value}px`);
+    $('.readerTopBar').css('max-width', `${value}px`);
+    setTimeout(() => window.dispatchEvent(new Event('resize')));
   };
 
   const toggleMuteMode = (value: boolean) => {
@@ -55,21 +107,33 @@ const App = () => {
     setMuteMode(value);
   };
 
+  const toggleControlStatus = (
+    status: boolean,
+    item: (typeof controlList)[number]
+  ) => {
+    const { key, selector } = item;
+    const updatedControlStatus = { ...controlStatus };
+    updatedControlStatus[key] = status;
+    $(selector).css('display', updatedControlStatus[key] ? 'flex' : 'none');
+    setControlStatus(updatedControlStatus);
+    updateConfig({ controlStatus: updatedControlStatus });
+  };
+
   const renderDom = () => {
     return (
       <div>
         <div
           style={{
-            backgroundImage: `url(${base64})`,
+            backgroundImage: `url(${logoBase64})`,
             opacity: muteMode ? 0 : 1
           }}
           className="bg-cover bg-center fixed w-12 h-12 left-4 top-3 cursor-pointer brightness-50 hover:brightness-100"
           onClick={showModal}></div>
         <div className="font-sans">
           <Modal ref={ref} backdrop={true}>
-            <Modal.Header className="font-bold">设置</Modal.Header>
             <Modal.Body>
               <form className="flex flex-col">
+                <Divider>插件设置</Divider>
                 <div className="mb-4">
                   <label className="block text-gray-700 font-medium mb-1">
                     页面宽度:
@@ -108,7 +172,7 @@ const App = () => {
                         />
                       </svg>
                     </Tooltip>
-                    <span>寂静模式:</span>
+                    <span>勿扰模式:</span>
                   </label>
                   <div className="font-sans flex flex-col gap-1">
                     <Toggle
@@ -118,9 +182,27 @@ const App = () => {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 font-medium mb-1">
-                    快捷键:
+                  <label className="text-gray-700 font-medium mb-1 flex items-center">
+                    <span>显示控件:</span>
                   </label>
+                  <div className=" flex flex-wrap font-sans gap-1">
+                    {controlList.map((item) => (
+                      <Form.Label
+                        title={item.title}
+                        key={item.key}
+                        className="w-16">
+                        <Checkbox
+                          checked={controlStatus[item.key]}
+                          onChange={(e) =>
+                            toggleControlStatus(e.target.checked, item)
+                          }
+                        />
+                      </Form.Label>
+                    ))}
+                  </div>
+                </div>
+                <Divider>快捷键说明</Divider>
+                <div className="mb-4">
                   <div className="font-sans flex flex-col gap-1">
                     <div>
                       <Kbd>X</Kbd>: 开始/停止自动阅读
