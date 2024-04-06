@@ -1,10 +1,14 @@
+import type { PlasmoCSConfig } from 'plasmo';
 import { useState } from 'react';
 import { Alert, Toast } from 'react-daisyui';
+import { useWWEStore } from '~background/store-config';
 
-import { getConfig } from '~background/config';
-import { myGetStyle, myPlasmoCSConfig } from '~core/plasmo-config';
+import { myGetStyle } from '~core/plasmo-config';
 
-export const config = myPlasmoCSConfig;
+export const config: PlasmoCSConfig = {
+  matches: ['https://weread.qq.com/*'],
+  run_at: 'document_start'
+};
 export const getStyle = myGetStyle;
 
 let _setText: React.Dispatch<React.SetStateAction<string>>;
@@ -13,8 +17,8 @@ let timer: NodeJS.Timeout;
 
 /** 在页面上显示文本 */
 export function toast(text: string, status = 'info'): void {
-  const { muteMode } = getConfig();
-  if (muteMode) {
+  const config = useWWEStore.getState().config;
+  if (config.muteMode) {
     return;
   }
   clearTimeout(timer);
@@ -24,7 +28,7 @@ export function toast(text: string, status = 'info'): void {
   timer = setTimeout(() => _setText(''), 3000);
 }
 
-const App = () => {
+const ToastApp = () => {
   const [text, setText] = useState('');
   const [status, setStatus] = useState<any>('info');
   _setText = setText;
@@ -47,4 +51,4 @@ const App = () => {
   return <>{renderDom()}</>;
 };
 
-export default App;
+export default ToastApp;

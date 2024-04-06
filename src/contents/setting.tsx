@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   Badge,
   Checkbox,
@@ -11,14 +11,18 @@ import {
   Tooltip
 } from 'react-daisyui';
 
-import { getConfig, updateConfig } from '~background/config';
-import { myGetStyle, myPlasmoCSConfig } from '~core/plasmo-config';
+import { updateConfigTemp, useWWEStore } from '~background/store-config';
+import { myGetStyle } from '~core/plasmo-config';
 import { beingReaderPage } from '~core/utils';
 import { logoBase64 } from '~types/config';
 
 import { toast } from './toast';
+import type { PlasmoCSConfig } from 'plasmo';
 
-export const config = myPlasmoCSConfig;
+export const config: PlasmoCSConfig = {
+  matches: ['https://weread.qq.com/*'],
+  run_at: 'document_start'
+};
 export const getStyle = myGetStyle;
 const widthList = [1000, 1200, 1400, 1600, 2000];
 const controlList = [
@@ -54,17 +58,11 @@ const controlList = [
   }
 ];
 
-const App = () => {
-  const [width, setWidth] = useState(null);
-  const [muteMode, setMuteMode] = useState(false);
-  const [controlStatus, setControlStatus] = useState({
-    listen: false,
-    menu: true,
-    note: false,
-    fontSize: false,
-    theme: false,
-    app: false
-  });
+const SettingApp = () => {
+  const config = useWWEStore((state) => state.config);
+  const loaded = useWWEStore((state) => state.loaded);
+  const updateConfig = updateConfigTemp;
+
   const ref = useRef<HTMLDialogElement>(null);
   const showModal = useCallback(() => {
     if (!beingReaderPage()) {
@@ -75,25 +73,27 @@ const App = () => {
   }, [ref]);
 
   useEffect(() => {
-    const { pageWidth, muteMode, controlStatus } = getConfig();
-    setMuteMode(muteMode);
     if (beingReaderPage()) {
-      setPageWidth(pageWidth);
-      setControlStatus(controlStatus);
+      applyPageWidth(config.pageWidth);
       // 控件状态初始化
       controlList.forEach((v) => {
-        $(v.selector).css('display', controlStatus[v.key] ? 'flex' : 'none');
+        $(v.selector).css(
+          'display',
+          config.controlStatus[v.key] ? 'flex' : 'none'
+        );
       });
     }
-  }, []);
+  }, [loaded]);
 
-  /** 设置可阅读范围的宽度 */
-  const setPageWidth = (value: number) => {
-    if (width === value) {
+  const setPageWidth =  (value: number) => {
+    if (config.pageWidth === value) {
       return;
     }
-    setWidth(value);
     updateConfig({ pageWidth: value });
+    applyPageWidth(value);
+  }
+
+  const applyPageWidth = (value: number) => {
     $('.app_content').css('max-width', `${value}px`);
     $('.readerTopBar').css('max-width', `${value}px`);
     setTimeout(() => window.dispatchEvent(new Event('resize')));
@@ -104,7 +104,6 @@ const App = () => {
       toast('');
     }
     updateConfig({ muteMode: value });
-    setMuteMode(value);
   };
 
   const toggleControlStatus = (
@@ -112,20 +111,22 @@ const App = () => {
     item: (typeof controlList)[number]
   ) => {
     const { key, selector } = item;
-    const updatedControlStatus = { ...controlStatus };
+    const updatedControlStatus = { ...config.controlStatus };
     updatedControlStatus[key] = status;
     $(selector).css('display', updatedControlStatus[key] ? 'flex' : 'none');
-    setControlStatus(updatedControlStatus);
     updateConfig({ controlStatus: updatedControlStatus });
   };
 
   const renderDom = () => {
+    if(!loaded) {
+      return <></>
+    }
     return (
       <div>
         <div
           style={{
             backgroundImage: `url(${logoBase64})`,
-            opacity: muteMode ? 0 : 1
+            opacity: config.muteMode ? 0 : 1
           }}
           className="bg-cover bg-center fixed w-12 h-12 left-4 top-3 cursor-pointer brightness-50 hover:brightness-100"
           onClick={showModal}></div>
@@ -145,7 +146,7 @@ const App = () => {
                         key={item}
                         className="cursor-pointer"
                         outline={true}
-                        color={width === item ? 'accent' : 'neutral'}
+                        color={config.pageWidth === item ? 'accent' : 'neutral'}
                         onClick={() => setPageWidth(item)}>
                         {item}px
                       </Badge>
@@ -176,7 +177,7 @@ const App = () => {
                   </label>
                   <div className="font-sans flex flex-col gap-1">
                     <Toggle
-                      checked={muteMode}
+                      checked={config.muteMode}
                       onChange={(e) => toggleMuteMode(e.target.checked)}
                     />
                   </div>
@@ -192,7 +193,7 @@ const App = () => {
                         key={item.key}
                         className="w-16">
                         <Checkbox
-                          checked={controlStatus[item.key]}
+                          checked={config.controlStatus[item.key]}
                           onChange={(e) =>
                             toggleControlStatus(e.target.checked, item)
                           }
@@ -231,4 +232,4 @@ const App = () => {
   return <>{renderDom()}</>;
 };
 
-export default App;
+export default SettingApp;

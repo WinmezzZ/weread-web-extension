@@ -1,7 +1,7 @@
 {
   "name": "weread-web-extension",
   "displayName": "微信读书助手",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "微信读书助手",
   "author": "前夕",
   "scripts": {
@@ -20,7 +20,8 @@
     "plasmo": "0.85.2",
     "react": "18.2.0",
     "react-daisyui": "5.0.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.1.1",

@@ -1,15 +1,16 @@
-![](https://eve-sama.oss-cn-shanghai.aliyuncs.com/blog/202404042311425.png)
+![image-20240406195925240](https://eve-sama.oss-cn-shanghai.aliyuncs.com/blog/202404061959299.png)
 
 ## 介绍
 
 这是一款针对微信读书网页版的浏览器插件, 主要功能如下
  - 自动阅读: 自动滚动网页, 速度可调
  - 设置页面宽度: 享受近乎全屏的阅读体验
+ - 自定义菜单显隐: 只保留有价值的控件, 节省空间
 
 ## 安装方式
 
-- Chrome: 审核中
-- Firefox: 审核中
+- Chrome: [https://addons.mozilla.org/zh-CN/firefox/addon/%E5%BE%AE%E4%BF%A1%E8%AF%BB%E4%B9%A6%E5%8A%A9%E6%89%8Bv2/](https://addons.mozilla.org/zh-CN/firefox/addon/%E5%BE%AE%E4%BF%A1%E8%AF%BB%E4%B9%A6%E5%8A%A9%E6%89%8Bv2/)
+- Firefox: [https://chromewebstore.google.com/detail/%E5%BE%AE%E4%BF%A1%E8%AF%BB%E4%B9%A6%E5%8A%A9%E6%89%8B/himocmagklembngmjkephklagajfbill](https://chromewebstore.google.com/detail/%E5%BE%AE%E4%BF%A1%E8%AF%BB%E4%B9%A6%E5%8A%A9%E6%89%8B/himocmagklembngmjkephklagajfbill)
 - Edge: 审核中
 
 ## 开发
