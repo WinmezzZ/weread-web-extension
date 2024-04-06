@@ -21,7 +21,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 export const config: PlasmoCSConfig = {
   matches: ['https://weread.qq.com/*'],
-  run_at: 'document_start'
+  run_at: 'document_end'
 };
 export const getStyle = myGetStyle;
 const widthList = [1000, 1200, 1400, 1600, 2000];
@@ -74,6 +74,8 @@ const SettingApp = () => {
 
   useEffect(() => {
     if (beingReaderPage()) {
+      // const config = useWWEStore.getState().config;
+      console.log(config, `config`);
       applyPageWidth(config.pageWidth);
       // 控件状态初始化
       controlList.forEach((v) => {

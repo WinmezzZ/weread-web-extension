@@ -1,7 +1,7 @@
 {
   "name": "weread-web-extension",
   "displayName": "微信读书助手",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "微信读书助手",
   "author": "前夕",
   "scripts": {
