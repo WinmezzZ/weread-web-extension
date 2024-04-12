@@ -1,7 +1,7 @@
 import type { PlasmoCSConfig } from 'plasmo';
 import { useEffect } from 'react';
 
-import { loadConfig, updateConfigTemp, useWWEStore } from '~background/store-config';
+import { loadConfig, useWWEStore } from '~background/store-config';
 
 export const config: PlasmoCSConfig = {
   matches: ['https://weread.qq.com/*'],
@@ -9,7 +9,7 @@ export const config: PlasmoCSConfig = {
 };
 
 const LoadConfigApp = () => {
-  const updateConfig = updateConfigTemp;
+  const updateConfig = useWWEStore((state) => state.updateConfig);
   const updateLoaded = useWWEStore((state) => state.updateLoaded);
 
   useEffect(() => {

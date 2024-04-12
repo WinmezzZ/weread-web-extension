@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { updateConfigTemp, useWWEStore } from '~background/store-config';
+import { useWWEStore } from '~background/store-config';
 
 import { beingReaderPage } from '~core/utils';
 
@@ -13,7 +13,7 @@ export const config: PlasmoCSConfig = {
 };
 
 const ShortcutListenerApp = () => {
-  const updateConfig = updateConfigTemp;
+  const updateConfig = useWWEStore((state) => state.updateConfig);
 
   let startAutoReading = false;
   let recordScroll: number;

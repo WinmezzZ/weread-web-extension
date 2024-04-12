@@ -17,10 +17,13 @@ export const useWWEStore = create<{
   return {
     config: defaultConfig,
     updateConfig: (config: Partial<Config>) => {
-      // updateConfig(config);
+      clearTimeout(timer);
       const currentConfig = get().config;
       const newConfig = { ...currentConfig, ...config };
       set({ config: newConfig });
+      timer = setTimeout(() => {
+        saveConfig(newConfig);
+      }, 500);
     },
     loaded: false,
     updateLoaded: (status) => set({ loaded: status })
@@ -53,16 +56,4 @@ function saveConfig(config: Config): void {
   (async () => {
     await storage.set('config', config);
   })();
-}
-
-/** zustand 的更新函数中不能处理副作用, 先临时写在外部 */
-export function updateConfigTemp(config: Partial<Config>): void {
-  clearTimeout(timer);
-  const currentConfig = useWWEStore.getState().config;
-  const newConfig = { ...currentConfig, ...config };
-  const { setState } = useWWEStore;
-  setState({ config: newConfig });
-  timer = setTimeout(() => {
-    saveConfig(newConfig);
-  }, 500);
 }

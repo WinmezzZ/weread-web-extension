@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import type { PlasmoCSConfig } from 'plasmo';
 import { useCallback, useEffect, useRef } from 'react';
 import {
   Badge,
@@ -11,13 +12,12 @@ import {
   Tooltip
 } from 'react-daisyui';
 
-import { updateConfigTemp, useWWEStore } from '~background/store-config';
+import { useWWEStore } from '~background/store-config';
 import { myGetStyle } from '~core/plasmo-config';
 import { beingReaderPage } from '~core/utils';
 import { logoBase64 } from '~types/config';
 
 import { toast } from './toast';
-import type { PlasmoCSConfig } from 'plasmo';
 
 export const config: PlasmoCSConfig = {
   matches: ['https://weread.qq.com/*'],
@@ -61,7 +61,7 @@ const controlList = [
 const SettingApp = () => {
   const config = useWWEStore((state) => state.config);
   const loaded = useWWEStore((state) => state.loaded);
-  const updateConfig = updateConfigTemp;
+  const updateConfig = useWWEStore((state) => state.updateConfig);
 
   const ref = useRef<HTMLDialogElement>(null);
   const showModal = useCallback(() => {
@@ -87,13 +87,13 @@ const SettingApp = () => {
     }
   }, [loaded]);
 
-  const setPageWidth =  (value: number) => {
+  const setPageWidth = (value: number) => {
     if (config.pageWidth === value) {
       return;
     }
     updateConfig({ pageWidth: value });
     applyPageWidth(value);
-  }
+  };
 
   const applyPageWidth = (value: number) => {
     $('.app_content').css('max-width', `${value}px`);
@@ -120,8 +120,8 @@ const SettingApp = () => {
   };
 
   const renderDom = () => {
-    if(!loaded) {
-      return <></>
+    if (!loaded) {
+      return <></>;
     }
     return (
       <div>
