@@ -1,7 +1,7 @@
 {
   "name": "weread-web-extension",
   "displayName": "微信读书助手",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "微信读书助手",
   "author": "前夕",
   "scripts": {
@@ -9,8 +9,7 @@
     "start:chrome": "plasmo dev --target=chrome-mv3",
     "build:firefox": "npx plasmo build --target=firefox-mv2",
     "build:chrome": "npx plasmo build --target=chrome-mv3",
-    "build:edge": "npx plasmo build --target=edge-mv3",
-    "build:all": "npm run build:firefox && npm run build:chrome && npm run build:edge"
+    "build:all": "npm run build:firefox && npm run build:chrome"
   },
   "dependencies": {
     "@plasmohq/messaging": "0.5.0",
