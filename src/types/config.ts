@@ -5,13 +5,14 @@ export interface Config {
   /** 勿扰模式 */
   muteMode: boolean;
   controlStatus: {
-    listen: boolean,
-    menu: boolean,
-    note: boolean,
-    fontSize: boolean,
-    theme: boolean,
-    app: boolean,
-  }
+    listen: boolean;
+    menu: boolean;
+    note: boolean;
+    fontSize: boolean;
+    theme: boolean;
+    app: boolean;
+    isNormalReader: false;
+  };
 }
 
 export const defaultConfig: Config = {
@@ -25,6 +26,7 @@ export const defaultConfig: Config = {
     fontSize: false,
     theme: false,
     app: false,
+    isNormalReader: false
   }
 };
 

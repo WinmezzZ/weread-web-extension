@@ -35,7 +35,6 @@ const ShortcutListenerApp = () => {
 
   const adjustSpeed = (type: 'fast' | 'slow') => {
     const { speed } = useWWEStore.getState().config;
-    console.log(speed, `speed`);
     const speedResult = type === 'fast' ? speed + 1 : speed - 1;
     if (speedResult < 1 || speedResult > 100) {
       toast('速度已达到极限值!', 'error');

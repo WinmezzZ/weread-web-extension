@@ -33,22 +33,24 @@ export const useWWEStore = create<{
 /** 从 storage 中读取配置 */
 export async function loadConfig(): Promise<Config> {
   return new Promise(async (resolve) => {
-    const config = await storage.get<Config>('config');
-    if (!config) {
-      resolve(config);
+    const storedConfig = await storage.get<Config>('config');
+
+    let resolvedConfig: Config;
+
+    if (!storedConfig) {
+      resolvedConfig = defaultConfig;
     } else {
-      // 对齐本地配置与最新版版本
-      const mergedConfig = Object.entries(defaultConfig).reduce(
-        (acc, [key, value]) => {
-          if (!(key in acc)) {
-            acc[key] = value;
-          }
-          return acc;
-        },
-        { ...config }
-      );
-      resolve(mergedConfig);
+      // 对齐本地配置与最新版本配置
+      resolvedConfig = {
+        ...defaultConfig,
+        controlStatus: {
+          ...defaultConfig.controlStatus,
+          ...(storedConfig.controlStatus || {})
+        }
+      };
     }
+
+    resolve(resolvedConfig);
   });
 }
 

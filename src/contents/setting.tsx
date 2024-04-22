@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import type { PlasmoCSConfig } from 'plasmo';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Badge,
   Checkbox,
@@ -25,43 +25,13 @@ export const config: PlasmoCSConfig = {
 };
 export const getStyle = myGetStyle;
 const widthList = [1000, 1200, 1400, 1600, 2000];
-const controlList = [
-  {
-    title: '听书',
-    key: 'listen',
-    selector: '.readerControls_item.lecture'
-  },
-  {
-    title: '目录',
-    key: 'menu',
-    selector: '.readerControls_item.catalog'
-  },
-  {
-    title: '笔记',
-    key: 'note',
-    selector: '.readerControls_item.note'
-  },
-  {
-    title: '字号',
-    key: 'fontSize',
-    selector: '.readerControls_fontSize'
-  },
-  {
-    title: '主题',
-    key: 'theme',
-    selector: '.readerControls_item.dark,.readerControls_item.white'
-  },
-  {
-    title: 'App',
-    key: 'app',
-    selector: '.readerControls_item.download'
-  }
-];
 
 const SettingApp = () => {
   const config = useWWEStore((state) => state.config);
   const loaded = useWWEStore((state) => state.loaded);
   const updateConfig = useWWEStore((state) => state.updateConfig);
+
+  const [controlList, setControlList] = useState([]);
 
   const ref = useRef<HTMLDialogElement>(null);
   const showModal = useCallback(() => {
@@ -74,11 +44,56 @@ const SettingApp = () => {
 
   useEffect(() => {
     if (beingReaderPage()) {
-      // const config = useWWEStore.getState().config;
-      console.log(config, `config`);
       applyPageWidth(config.pageWidth);
+      // #region 并不是所有的书籍的控件都是一模一样的, 需要遍历DOM确定
+      const allControlList = [
+        {
+          title: '双栏',
+          key: 'isNormalReader',
+          selector: '.readerControls_item.isNormalReader'
+        },
+        {
+          title: '听书',
+          key: 'listen',
+          selector: '.readerControls_item.lecture'
+        },
+        {
+          title: '目录',
+          key: 'menu',
+          selector: '.readerControls_item.catalog'
+        },
+        {
+          title: '笔记',
+          key: 'note',
+          selector: '.readerControls_item.note'
+        },
+        {
+          title: '字号',
+          key: 'fontSize',
+          selector: '.readerControls_fontSize'
+        },
+        {
+          title: '主题',
+          key: 'theme',
+          selector: '.readerControls_item.dark,.readerControls_item.white'
+        },
+        {
+          title: 'App',
+          key: 'app',
+          selector: '.readerControls_item.download'
+        }
+      ];
+      const tempControlList = [];
+      allControlList.forEach((v) => {
+        const target = $(v.selector);
+        if (target.length) {
+          tempControlList.push(v);
+        }
+      });
+      setControlList(tempControlList);
+      // #endregion
       // 控件状态初始化
-      controlList.forEach((v) => {
+      tempControlList.forEach((v) => {
         $(v.selector).css(
           'display',
           config.controlStatus[v.key] ? 'flex' : 'none'
@@ -188,7 +203,7 @@ const SettingApp = () => {
                   <label className="text-gray-700 font-medium mb-1 flex items-center">
                     <span>显示控件:</span>
                   </label>
-                  <div className=" flex flex-wrap font-sans gap-1">
+                  <div className="flex flex-wrap font-sans gap-1">
                     {controlList.map((item) => (
                       <Form.Label
                         title={item.title}
