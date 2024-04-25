@@ -1,11 +1,11 @@
+import $ from 'jquery';
+import type { PlasmoCSConfig } from 'plasmo';
 import { useEffect } from 'react';
 
 import { useWWEStore } from '~background/store-config';
-
 import { beingReaderPage } from '~core/utils';
 
 import { toast } from './toast';
-import type { PlasmoCSConfig } from 'plasmo';
 
 export const config: PlasmoCSConfig = {
   matches: ['https://weread.qq.com/*'],
@@ -14,6 +14,8 @@ export const config: PlasmoCSConfig = {
 
 const ShortcutListenerApp = () => {
   const updateConfig = useWWEStore((state) => state.updateConfig);
+  const loaded = useWWEStore((state) => state.loaded);
+  const readerMode = useWWEStore((state) => state.readerMode);
 
   let startAutoReading = false;
   let recordScroll: number;
@@ -44,7 +46,9 @@ const ShortcutListenerApp = () => {
     toast(`调整速度至:${speedResult}`);
   };
 
+  /** 调整阅读进度 */
   const adjustProgress = (type: 'up' | 'down', e: KeyboardEvent) => {
+    // 微信读书本身也实现了上下箭头的事件, 阻止他的事件, 自己实现相关业务
     e.preventDefault();
     e.stopPropagation();
     recordScrollHeight();
@@ -52,13 +56,32 @@ const ShortcutListenerApp = () => {
     document.documentElement.scrollTop = recordScroll;
   };
 
+  /** 仅适用于双栏模式下的翻页 */
+  const ajustSection = (type: 'previous' | 'next') => {
+    const $pageChangeBtn = $('.renderTarget_pager_button');
+    let $targetBtn: JQuery<HTMLElement>;
+    if (type === 'previous') {
+      $targetBtn = $pageChangeBtn.eq(0);
+    } else if(type === 'next') {
+      $targetBtn = $pageChangeBtn.eq(1);
+    }
+    $targetBtn.trigger('click');
+  };
+
   useEffect(() => {
+    if (!loaded) {
+      return;
+    }
     window.addEventListener('keydown', (e) => {
       const key = e.key;
       if (!beingReaderPage()) {
         return;
       }
       if (['x', 'X'].includes(key)) {
+        if (readerMode === 'horizontal') {
+          toast('当前阅读模式为双栏模式, 不支持自动阅读', 'error');
+          return;
+        }
         // 开启/关闭自动阅读
         startAutoReading = !startAutoReading;
         if (startAutoReading) {
@@ -69,24 +92,34 @@ const ShortcutListenerApp = () => {
           toast('关闭自动阅读');
         }
       } else if (['a', 'A'].includes(key)) {
-        adjustSpeed('slow');
+        if (readerMode === 'horizontal') {
+          ajustSection('previous');
+        } else if(readerMode === 'normal') {
+          adjustSpeed('slow');
+        }
       } else if (['d', 'D'].includes(key)) {
-        adjustSpeed('fast');
+        if (readerMode === 'horizontal') {
+          ajustSection('next');
+        } else if(readerMode === 'normal') {
+          adjustSpeed('fast');
+        }
       } else if (['ArrowUp', 'w', 'W'].includes(key)) {
-        adjustProgress('up', e);
+        if (readerMode === 'horizontal') {
+          ajustSection('previous');
+        } else if(readerMode === 'normal') {
+          adjustProgress('up', e);
+        }
       } else if (['ArrowDown', 's', 'S'].includes(key)) {
-        adjustProgress('down', e);
+        if (readerMode === 'horizontal') {
+          ajustSection('next');
+        } else if(readerMode === 'normal') {
+          adjustProgress('down', e);
+        }
       }
     });
 
-    window.addEventListener('load', () => {
-      // #region 不支持就提示换浏览器, 不做兼容方案
-      if (!window.requestAnimationFrame) {
-        toast('该浏览器暂不支持 requestAnimationFrame API, 请更换浏览器!');
-        return;
-      }
-      // #endregion
-      if (beingReaderPage()) {
+    if (beingReaderPage()) {
+      if (readerMode === 'normal') {
         const bookTitle = document.querySelector('.readerTopBar_title_link');
         if (bookTitle) {
           toast(
@@ -112,10 +145,12 @@ const ShortcutListenerApp = () => {
         } else {
           toast('章节标题容器DOM已更换类名无法查找, 请联系作者修改代码!');
         }
-        // #endregion
+      } else if (readerMode === 'horizontal') {
+        toast('当前阅读模式为双栏模式, 不支持自动阅读');
       }
-    });
-  }, []);
+      // #endregion
+    }
+  }, [loaded]);
   return <></>;
 };
 

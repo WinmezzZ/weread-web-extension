@@ -12,6 +12,7 @@ specifiers:
   autoprefixer: 10.4.19
   daisyui: 4.9.0
   jquery: 3.7.1
+  lottie-web: ^5.12.2
   plasmo: 0.85.2
   postcss: 8.4.38
   prettier: 3.2.4
@@ -27,6 +28,7 @@ dependencies:
   '@plasmohq/storage': 1.8.0_react@18.2.0
   daisyui: 4.9.0_postcss@8.4.38
   jquery: 3.7.1
+  lottie-web: 5.12.2
   plasmo: 0.85.2_cgrkyob6xpt4agxrru66nihn6a
   react: 18.2.0
   react-daisyui: 5.0.0_sbxz5oqzbkjdfhboawwff2obnm
@@ -4471,6 +4473,10 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+    dev: false
+
+  /lottie-web/5.12.2:
+    resolution: {integrity: sha512-uvhvYPC8kGPjXT3MyKMrL3JitEAmDMp30lVkuq/590Mw9ok6pWcFCwXJveo0t5uqYw1UREQHofD+jVpdjBv8wg==}
     dev: false
 
   /lowercase-keys/3.0.0:

@@ -1,8 +1,8 @@
 {
   "name": "weread-web-extension",
-  "displayName": "微信读书助手",
-  "version": "0.0.4",
-  "description": "微信读书助手",
+  "displayName": "微信读书助手 - 前夕",
+  "version": "0.0.5",
+  "description": "自动阅读、自定义菜单、任意屏占比, 全方位打造沉浸式阅读体验",
   "author": "前夕",
   "scripts": {
     "start:firefox": "plasmo dev --target=firefox-mv2",
@@ -16,6 +16,7 @@
     "@plasmohq/storage": "1.8.0",
     "daisyui": "4.9.0",
     "jquery": "3.7.1",
+    "lottie-web": "^5.12.2",
     "plasmo": "0.85.2",
     "react": "18.2.0",
     "react-daisyui": "5.0.0",

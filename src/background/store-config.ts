@@ -7,12 +7,15 @@ import { defaultConfig, type Config } from '~types/config';
 const storage = new Storage();
 let timer: NodeJS.Timeout;
 
-// todo: 可以使用 combine 改写点优雅点
+// todo: 可以使用 combine 改写的优雅点
 export const useWWEStore = create<{
   config: Config;
   updateConfig: (config: Partial<Config>) => void;
   loaded: boolean;
   updateLoaded: (status: boolean) => void;
+  // 默认是普通阅读器, 微信读书新推出了个双栏阅读器 horizontal
+  readerMode: 'horizontal' | 'normal';
+  updateReaderMode: (mode: 'horizontal' | 'normal') => void;
 }>((set, get) => {
   return {
     config: defaultConfig,
@@ -26,7 +29,9 @@ export const useWWEStore = create<{
       }, 500);
     },
     loaded: false,
-    updateLoaded: (status) => set({ loaded: status })
+    updateLoaded: (status) => set({ loaded: status }),
+    readerMode: null,
+    updateReaderMode: (mode) => set({ readerMode: mode })
   };
 });
 
@@ -43,6 +48,7 @@ export async function loadConfig(): Promise<Config> {
       // 对齐本地配置与最新版本配置
       resolvedConfig = {
         ...defaultConfig,
+        ...storedConfig,
         controlStatus: {
           ...defaultConfig.controlStatus,
           ...(storedConfig.controlStatus || {})
