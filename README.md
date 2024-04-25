@@ -42,3 +42,7 @@
 执行`build:firefox`后打开`firefox-mv2-prod`文件夹将其内容进行打包, 然后上传到 firefox 浏览器的[扩展商店](https://addons.mozilla.org/zh-CN/developers/addon/submit/theme/distribution)即可.
 
 > 注意, 不是打包`firefox-mv2-prod`, 是打包里面的内容
+
+### Edge
+
+执行`build:edge`后将`edge-mv3-prod`文件夹进行压缩, 然后上传到 edge 浏览器的[扩展商店](https://partner.microsoft.com/zh-cn/dashboard/microsoftedge/overview)即可.
