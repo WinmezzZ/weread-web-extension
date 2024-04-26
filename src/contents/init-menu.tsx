@@ -10,8 +10,7 @@ export const config: PlasmoCSConfig = {
 };
 
 const MenuApp = () => {
-  const loaded = useWWEStore((state) => state.loaded);
-  const readerMode = useWWEStore((state) => state.readerMode);
+  const { loaded, readerMode } = useWWEStore((state) => state);
 
   useEffect(() => {
     if (!loaded) {

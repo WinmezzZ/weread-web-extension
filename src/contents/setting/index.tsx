@@ -31,10 +31,7 @@ export const config: PlasmoCSConfig = {
 export const getStyle = myGetStyle;
 
 const SettingApp = () => {
-  const config = useWWEStore((state) => state.config);
-  const loaded = useWWEStore((state) => state.loaded);
-  const readerMode = useWWEStore((state) => state.readerMode);
-  const updateConfig = useWWEStore((state) => state.updateConfig);
+  const { config, loaded, readerMode, updateConfig } = useWWEStore((state) => state);
 
   const [controlList, setControlList] = useState([]);
   const [visibleWXDrawer, SetVisibleWXDrawer] = useState(false);

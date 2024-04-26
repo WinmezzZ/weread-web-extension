@@ -13,9 +13,7 @@ export const config: PlasmoCSConfig = {
 };
 
 const ShortcutListenerApp = () => {
-  const updateConfig = useWWEStore((state) => state.updateConfig);
-  const loaded = useWWEStore((state) => state.loaded);
-  const readerMode = useWWEStore((state) => state.readerMode);
+  const { loaded, readerMode, updateConfig } = useWWEStore((state) => state);
 
   let startAutoReading = false;
   let recordScroll: number;
