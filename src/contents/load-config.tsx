@@ -24,10 +24,13 @@ const LoadConfigApp = () => {
         updateReaderMode('normal');
       }
       // 加载配置初始化
-      loadConfig().then((config) => {
-        updateConfig(config);
-        updateLoaded(true);
-      });
+      loadConfig()
+        .then((config) => {
+          updateConfig(config);
+        })
+        .finally(() => {
+          updateLoaded(true);
+        });
     });
   }, []);
   return <></>;
